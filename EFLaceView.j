@@ -3,6 +3,12 @@
 //  created by daniel boehringer on 29/DEC/2023
 //  cappuccino port of
 //  EFLaceView.m
+//  all changes copyright by daniel boehringer
+//  todo
+//  - draw nice title
+//  - make connection look better when really short
+//
+//  original copyright notice
 //  EFLaceView
 //
 //  Created by MacBook Pro ef on 01/08/06.
@@ -195,9 +201,8 @@ function treshold(x, tr)
 
 - (void)stopObservingDataObjects:(CPArray)dataObjects
 {
-    if ([dataObjects isEqual:[CPNull null]]) {
+    if ([dataObjects isEqual:[CPNull null]])
         return;
-    }
 
     var dataObjectsCount = [dataObjects count];
 
