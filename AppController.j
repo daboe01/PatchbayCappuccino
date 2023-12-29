@@ -54,7 +54,7 @@
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
     var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
-        contentView = [theWindow contentView];
+    contentView = [theWindow contentView];
 
     [contentView setBackgroundColor:[CPColor colorWithWhite:0.95 alpha:1.0]];
 
@@ -118,6 +118,20 @@
     var scrollView = [[CPScrollView alloc] initWithFrame:CGRectMake(20, 70, 520, 510)];
     [scrollView setDocumentView:laceView];
     [contentView addSubview:scrollView];
+
+    var tableView = [CPTableView new];
+
+    var column = [[CPTableColumn alloc] initWithIdentifier:@"x"];
+    [column setEditable:YES];
+    [[column headerView] setStringValue:@"X"];
+    [tableView addTableColumn:column];
+    [column bind:CPValueBinding toObject:ac
+          withKeyPath:@"arrangedObjects.originX" options:nil];
+
+    var scrollView2 = [[CPScrollView alloc] initWithFrame:CGRectMake(600, 70, 520, 510)];
+    [scrollView2 setDocumentView:tableView];
+    [contentView addSubview:scrollView2];
+
 }
 
 - (void)addBlock:(id)sender
