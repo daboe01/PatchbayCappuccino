@@ -1,0 +1,15 @@
+# Cappuccino build files
+build/
+
+# Cappuccino dependencies
+Frameworks/
+Resources/
+Tests/
+Documentation/
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+
+# OS X files
+.DS_Store
