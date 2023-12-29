@@ -381,7 +381,6 @@ function treshold(x, tr)
 
     var dist = Math.sqrt(Math.pow(startPoint.x - endPoint.x, 2) + Math.pow(startPoint.y - endPoint.y, 2));
 
-
     // a lace is made of an outside gray line of width 5, and a inside insideColor(ed) line of width 3
     var p0 = CGPointMake(startPoint.x, startPoint.y);
     var p3 = CGPointMake(endPoint.x, endPoint.y);
@@ -417,6 +416,7 @@ function treshold(x, tr)
     [path appendBezierPathWithOvalInRect:CGRectMake(endPoint.x-1.5,endPoint.y-1.5,3,3)];
     [path fill];
 
+    // if the line is rather short, draw a straight line. the curve would look rather odd in this case.
     if (dist < 40)
     {
         path = [CPBezierPath bezierPath];
@@ -435,7 +435,6 @@ function treshold(x, tr)
 
         return;
     }
-
 
     path = [CPBezierPath bezierPath];
     [path setLineWidth:5];

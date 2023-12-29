@@ -3,6 +3,10 @@
  *
  *  Test application for EFLaceView
  *  Copyright (C) 2023 Daniel Boehringer
+ *
+ * todo
+ * add tableview to see what is going on
+ *
  */
 
 @import <Foundation/Foundation.j>

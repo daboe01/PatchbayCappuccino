@@ -417,12 +417,13 @@ var _inoutputObservationContext = 1094;
         var path = [CPBezierPath bezierPath];
         [path setLineWidth:1];
         [[CPColor grayColor] set];
-        var start = [self convertPoint: [self startHolePoint:aDict] fromView:[self superview]];
+        var start = [self convertPoint:[self startHolePoint:aDict] fromView:[self superview]];
         [path appendBezierPathWithOvalInRect:CGRectMake(start.x - 3,start.y - 3, 6, 6)];
         [path stroke];
         var labelOrigin = CGPointMake(0, 0);
         var outputLabel = [aDict valueForKey:@"label"];
-        labelOrigin.x = start.x - 5 - [outputLabel sizeWithAttributes:_stringAttributes].width;
+
+        labelOrigin.x = start.x - 3 - [outputLabel sizeWithAttributes:_stringAttributes].width;
         labelOrigin.y = start.y;
         [[CPColor blackColor] set];
         [outputLabel drawAtPoint:labelOrigin withAttributes:_stringAttributes];
