@@ -32,6 +32,15 @@
 }
 @end
 
+// fixme: need to implement
+@interface CPObject (EFLaceViewDelegateMethod)
+- (BOOL)EFLaceView:(EFLaceView*)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
+- (BOOL)EFLaceView:(EFLaceView*)aView shouldSelectLace:(CPDictionary)aLace;
+- (BOOL)EFLaceView:(EFLaceView*)aView shouldConnectHole:(id)startHole toHole:(id)endHole;
+- (BOOL)EFLaceView:(EFLaceView*)aView shouldDrawView:(EFView)aView;
+@end
+
+
 @implementation EFLaceView : CPView
 {
     id               _dataObjectsContainer;
