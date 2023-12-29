@@ -39,13 +39,14 @@
 @end
 
 // fixme: need to implement
+/*
 @interface CPObject (EFLaceViewDelegateMethod)
-- (BOOL)EFLaceView:(EFLaceView*)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
-- (BOOL)EFLaceView:(EFLaceView*)aView shouldSelectLace:(CPDictionary)aLace;
-- (BOOL)EFLaceView:(EFLaceView*)aView shouldConnectHole:(id)startHole toHole:(id)endHole;
-- (BOOL)EFLaceView:(EFLaceView*)aView shouldDrawView:(EFView)aView;
+- (BOOL)EFLaceView:(EFLaceView)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
+- (BOOL)EFLaceView:(EFLaceView)aView shouldSelectLace:(CPDictionary)aLace;
+- (BOOL)EFLaceView:(EFLaceView)aView shouldConnectHole:(id)startHole toHole:(id)endHole;
+- (BOOL)EFLaceView:(EFLaceView)aView shouldDrawView:(EFView)aView;
 @end
-
+*/
 
 @implementation EFLaceView : CPView
 {
@@ -377,6 +378,10 @@ function treshold(x, tr)
 
 -(void)drawLinkFrom:(CGPoint)startPoint to:(CGPoint)endPoint color:(CPColor)insideColor
 {
+
+    var dist = Math.sqrt(Math.pow(startPoint.x - endPoint.x, 2) + Math.pow(startPoint.y - endPoint.y, 2));
+
+
     // a lace is made of an outside gray line of width 5, and a inside insideColor(ed) line of width 3
     var p0 = CGPointMake(startPoint.x, startPoint.y);
     var p3 = CGPointMake(endPoint.x, endPoint.y);
@@ -411,6 +416,26 @@ function treshold(x, tr)
     [insideColor set];
     [path appendBezierPathWithOvalInRect:CGRectMake(endPoint.x-1.5,endPoint.y-1.5,3,3)];
     [path fill];
+
+    if (dist < 40)
+    {
+        path = [CPBezierPath bezierPath];
+        [path setLineWidth:5];
+        [path moveToPoint:startPoint];
+        [path lineToPoint:endPoint];
+        [[CPColor grayColor] set];
+        [path stroke];
+
+        path = [CPBezierPath bezierPath];
+        [path setLineWidth:3];
+        [path moveToPoint:startPoint];
+        [path lineToPoint:endPoint];
+        [insideColor set];
+        [path stroke];
+
+        return;
+    }
+
 
     path = [CPBezierPath bezierPath];
     [path setLineWidth:5];
@@ -451,7 +476,6 @@ function treshold(x, tr)
                     {
                         var endHole = endHoles[k];
                         var endData = [endHole valueForKey:@"data"];
-                        debugger
 
                         var endView = [self viewForData:endData];
                         var endPoint = [endView endHolePoint:endHole];
@@ -591,10 +615,6 @@ function treshold(x, tr)
     [self didChangeValueForKey:@"laces"];
 
     [[startHole mutableSetValueForKey:@"laces"] addObject:endHole];
-
-    var a = [startHole mutableSetValueForKey:@"laces"];
-    var b = [endHole valueForKey:@"data"];
-    debugger
 }
 
 - (BOOL) acceptsFirstResponder

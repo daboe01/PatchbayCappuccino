@@ -17,6 +17,7 @@
         [super setValue:aVal forKey:aKey];
 }
 @end
+
 @implementation CPArray(outletsContainer)
 - (CPArray)allObjects
 {
