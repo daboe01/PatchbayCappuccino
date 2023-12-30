@@ -76,15 +76,9 @@
     [mydata setValue:'test' forKey:'title'];
     [mydata setValue:100 forKey:'originX'];
     [mydata setValue:100 forKey:'originY'];
-    [mydata setValue:'b' forKey:'data'];
 
     var myoutput = [CPConservativeDictionary new];
     [myoutput setValue:'Ausgang' forKey:'label'];
-    [myoutput setValue:0 forKey:'x'];
-    [myoutput setValue:2 forKey:'y'];
-    [myoutput setValue:10 forKey:'width'];
-    [myoutput setValue:10 forKey:'height'];
-    [myoutput setValue:'a' forKey:'data'];
     [mydata setValue:@[myoutput] forKey:'outputs'];
 
     [ac insertObject:mydata atArrangedObjectIndex:0];
@@ -94,21 +88,23 @@
     //
 
     var mydata2 = [CPConservativeDictionary new];
-    [mydata2 setValue:'test' forKey:'title'];
-    [mydata2 setValue:150 forKey:'originX'];
+    [mydata2 setValue:'test2' forKey:'title'];
+    [mydata2 setValue:180 forKey:'originX'];
     [mydata2 setValue:100 forKey:'originY'];
-    [mydata2 setValue:'a' forKey:'data'];
 
     var myinput = [CPConservativeDictionary new];
     [myinput setValue:'Eingang' forKey:'label'];
-    [myinput setValue:0 forKey:'x'];
-    [myinput setValue:1 forKey:'y'];
-    [myinput setValue:10 forKey:'width'];
-    [myinput setValue:10 forKey:'height'];
-    [myinput setValue:'b' forKey:'data'];
     [mydata2 setValue:@[myinput] forKey:'inputs'];
 
     [ac insertObject:mydata2 atArrangedObjectIndex:0];
+
+    // make a connection programmatically
+    if (1){
+        var startHoles = [mydata valueForKey:'outputs'];
+        [startHoles[0] setValue:[mydata2 valueForKey:'inputs'] forKey:"laces"]
+        [myinput setValue:mydata2 forKey:"data"]
+        [myoutput setValue:mydata forKey:"data"]
+    }
 
     [laceView bind:"selectionIndexes" toObject:ac withKeyPath:"selectionIndexes" options:nil]
     [laceView bind:"dataObjects" toObject:ac withKeyPath:"arrangedObjects" options:nil]

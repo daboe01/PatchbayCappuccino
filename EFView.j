@@ -105,6 +105,7 @@ var _inoutputObservationContext = 1094;
         [self addObserver:self forKeyPath:@"inputs" options:(CPKeyValueObservingOptionNew|CPKeyValueObservingOptionOld) context:_inoutputObservationContext];
         [self addObserver:self forKeyPath:@"outputs" options:(CPKeyValueObservingOptionNew|CPKeyValueObservingOptionOld) context:_inoutputObservationContext];
     }
+    
     return self;
 }
 
@@ -237,7 +238,7 @@ var _inoutputObservationContext = 1094;
     }
 }
 
--(void) setHeight:(float)aFloat
+- (void)setHeight:(float)aFloat
 {
     if (aFloat != [self height])
     {
@@ -248,7 +249,7 @@ var _inoutputObservationContext = 1094;
     }
 }
 
-- (CPMutableSet )inputs
+- (CPMutableSet)inputs
 {
     return _inputs;
 }
@@ -272,7 +273,7 @@ var _inoutputObservationContext = 1094;
     return result;
 }
 
-- (CPMutableSet )outputs
+- (CPMutableSet)outputs
 {
     return _outputs;
 }
@@ -337,7 +338,7 @@ var _inoutputObservationContext = 1094;
 
     var hole = [[self orderedHoles:[self inputs]] indexOfObject:aEndHole] + 1;
 
-    return [self convertPoint:CGPointMake(5+4, [self bounds].origin.y + [self bounds].size.height - [self verticalOffset] - heightOfText * (hole + 1.0)) toView:[self superview]];
+    return [self convertPoint:CGPointMake(5 + 4, [self bounds].origin.y + [self bounds].size.height - [self verticalOffset] - heightOfText * (hole + 1.0)) toView:[self superview]];
 }
 
 - (CGPoint)startHolePoint:(id)aStartHole
@@ -346,8 +347,6 @@ var _inoutputObservationContext = 1094;
     var heightOfText = stringSize.height;
 
     var hole = [[self orderedHoles:[self outputs]] indexOfObject:aStartHole] + 1;
-
-    //CPAssert( (hole <= [[self outputs] count]),@"hole should be within Outputs range in startholePoint:");
 
     return [self convertPoint:CGPointMake([self bounds].origin.x + [self bounds].size.width - 5 - 4, [self bounds].origin.y + [self bounds].size.height - [self verticalOffset] - heightOfText * (hole + 1.0)) toView:[self superview]];
 }
@@ -384,9 +383,7 @@ var _inoutputObservationContext = 1094;
 - (void)drawRect:(CGRect)rect
 {
     var bounds = CGRectInset([self bounds], 4, 4);
-    var backgroundAlpha = 0.7;
     var stringSize = [[self title] sizeWithAttributes:_stringAttributes];
-
 
     //draw title
     [[self title] drawAtPoint:CGPointMake(bounds.origin.x + (bounds.size.width - stringSize.width) / 2, 12) withAttributes:_stringAttributes];

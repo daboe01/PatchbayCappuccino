@@ -5,9 +5,8 @@
 //  EFLaceView.m
 //  all changes copyright by daniel boehringer
 //  todo
-//  - make connections persistent
 //  - draw title more nicely
-//  - undo-redo
+//  - add undo-redo
 //
 //  original copyright notice
 //  EFLaceView
@@ -471,6 +470,7 @@ function treshold(x, tr)
                 if ([endHoles count] > 0)
                 {
                     var startPoint = [startView startHolePoint:startHole];
+
                     for (var k = 0 ; k < [endHoles count] ; k++)
                     {
                         var endHole = endHoles[k];
@@ -480,13 +480,9 @@ function treshold(x, tr)
                         var endPoint = [endView endHolePoint:endHole];
 
                         if ([startView isSelected] || [endView isSelected])
-                        {
                             [self drawLinkFrom:startPoint to:endPoint color:[CPColor selectedControlColor]];
-                        }
                         else
-                        {
                             [self drawLinkFrom:startPoint to:endPoint color:[CPColor yellowColor]];
-                        }
                     }
                 }
             }
