@@ -5,7 +5,6 @@
  *  Copyright (C) 2023 Daniel Boehringer
  *
  * todo
- * add tableview to see what is going on
  *
  */
 
@@ -82,9 +81,10 @@
     var myoutput = [CPConservativeDictionary new];
     [myoutput setValue:'Ausgang' forKey:'label'];
     [myoutput setValue:0 forKey:'x'];
-    [myoutput setValue:0 forKey:'y'];
-    [myoutput setValue:10 forKey:'with'];
+    [myoutput setValue:2 forKey:'y'];
+    [myoutput setValue:10 forKey:'width'];
     [myoutput setValue:10 forKey:'height'];
+    [myoutput setValue:'a' forKey:'data'];
     [mydata setValue:@[myoutput] forKey:'outputs'];
 
     [ac insertObject:mydata atArrangedObjectIndex:0];
@@ -102,9 +102,10 @@
     var myinput = [CPConservativeDictionary new];
     [myinput setValue:'Eingang' forKey:'label'];
     [myinput setValue:0 forKey:'x'];
-    [myinput setValue:0 forKey:'y'];
-    [myinput setValue:10 forKey:'with'];
+    [myinput setValue:1 forKey:'y'];
+    [myinput setValue:10 forKey:'width'];
     [myinput setValue:10 forKey:'height'];
+    [myinput setValue:'b' forKey:'data'];
     [mydata2 setValue:@[myinput] forKey:'inputs'];
 
     [ac insertObject:mydata2 atArrangedObjectIndex:0];
@@ -119,6 +120,10 @@
     [scrollView setDocumentView:laceView];
     [contentView addSubview:scrollView];
 
+    //
+    // add tableview to see what is going on
+    //
+
     var tableView = [CPTableView new];
 
     var column = [[CPTableColumn alloc] initWithIdentifier:@"x"];
@@ -128,10 +133,23 @@
     [column bind:CPValueBinding toObject:ac
           withKeyPath:@"arrangedObjects.originX" options:nil];
 
+    column = [[CPTableColumn alloc] initWithIdentifier:@"inputs"];
+    [column setEditable:YES];
+    [[column headerView] setStringValue:@"In"];
+    [tableView addTableColumn:column];
+    [column bind:CPValueBinding toObject:ac
+     withKeyPath:@"arrangedObjects.inputs" options:nil];
+
+    column = [[CPTableColumn alloc] initWithIdentifier:@"outputs"];
+    [column setEditable:YES];
+    [[column headerView] setStringValue:@"Out"];
+    [tableView addTableColumn:column];
+    [column bind:CPValueBinding toObject:ac
+     withKeyPath:@"arrangedObjects.outputs" options:nil];
+
     var scrollView2 = [[CPScrollView alloc] initWithFrame:CGRectMake(600, 70, 520, 510)];
     [scrollView2 setDocumentView:tableView];
     [contentView addSubview:scrollView2];
-
 }
 
 - (void)addBlock:(id)sender

@@ -5,8 +5,9 @@
 //  EFLaceView.m
 //  all changes copyright by daniel boehringer
 //  todo
-//  - draw nice title
-//  - make connection look better when really short
+//  - make connections persistent
+//  - draw title more nicely
+//  - undo-redo
 //
 //  original copyright notice
 //  EFLaceView
@@ -38,7 +39,7 @@
 }
 @end
 
-// fixme: need to implement
+// fixme: need to implement delegate methods
 /*
 @interface CPObject (EFLaceViewDelegateMethod)
 - (BOOL)EFLaceView:(EFLaceView)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
@@ -117,9 +118,7 @@ function treshold(x, tr)
         [_selectionIndexesContainer addObserver:self forKeyPath:_selectionIndexesKeyPath options:0 context:_selectionIndexesObservationContext];
     }
     else
-    {
         [super bind:bindingName toObject:observableObject withKeyPath:observableKeyPath options:options];
-    }
 
     [self setNeedsDisplay:YES];
 }
@@ -137,9 +136,12 @@ function treshold(x, tr)
         [_selectionIndexesContainer removeObserver:self forKeyPath:_selectionIndexesKeyPath];
         _selectionIndexesContainer = nil;
         _selectionIndexesKeyPath = nil;
-    } else {
+    }
+    else
+    {
         [super unbind:bindingName];
     }
+
     [self setNeedsDisplay:YES];
 }
 
@@ -157,32 +159,32 @@ function treshold(x, tr)
         var newDataObject =  dataObjects[i];
 
         [newDataObject addObserver:self forKeyPath:@"drawingBounds" options:(CPKeyValueObservingOptionNew | CPKeyValueObservingOptionOld) context:_propertyObservationContext];
-        var dummy = [[EFView alloc] init];
-        [self addSubview:dummy];
+        var myview = [[EFView alloc] init];
+        [self addSubview:myview];
 
-        [self scrollRectToVisible:[dummy bounds]]; //make new view visible if view in scrolling view
+        [self scrollRectToVisible:[myview bounds]]; //make new view visible if view in scrolling view
 
         // bind view to data
-        [dummy bind:@"title" toObject:newDataObject withKeyPath:@"title" options:nil];
-        [dummy bind:@"titleColor" toObject:newDataObject withKeyPath:@"titleColor" options:nil];
-        [dummy bind:@"originX" toObject:newDataObject withKeyPath:@"originX" options:nil];
-        [dummy bind:@"originY" toObject:newDataObject withKeyPath:@"originY" options:nil];
-        [dummy bind:@"width" toObject:newDataObject withKeyPath:@"width" options:nil];
-        [dummy bind:@"height" toObject:newDataObject withKeyPath:@"height" options:nil];
-        [dummy bind:@"tag" toObject:newDataObject withKeyPath:@"tag" options:nil];
-        [dummy bind:@"verticalOffset" toObject:newDataObject withKeyPath:@"verticalOffset" options:nil];
+        [myview bind:@"title" toObject:newDataObject withKeyPath:@"title" options:nil];
+        [myview bind:@"titleColor" toObject:newDataObject withKeyPath:@"titleColor" options:nil];
+        [myview bind:@"originX" toObject:newDataObject withKeyPath:@"originX" options:nil];
+        [myview bind:@"originY" toObject:newDataObject withKeyPath:@"originY" options:nil];
+        [myview bind:@"width" toObject:newDataObject withKeyPath:@"width" options:nil];
+        [myview bind:@"height" toObject:newDataObject withKeyPath:@"height" options:nil];
+        [myview bind:@"tag" toObject:newDataObject withKeyPath:@"tag" options:nil];
+        [myview bind:@"verticalOffset" toObject:newDataObject withKeyPath:@"verticalOffset" options:nil];
 
-        [dummy bind:@"inputs" toObject:newDataObject withKeyPath:@"inputs" options:nil];
-        [dummy bind:@"outputs" toObject:newDataObject withKeyPath:@"outputs" options:nil];
+        [myview bind:@"inputs" toObject:newDataObject withKeyPath:@"inputs" options:nil];
+        [myview bind:@"outputs" toObject:newDataObject withKeyPath:@"outputs" options:nil];
 
-        [newDataObject bind:@"originX" toObject:dummy withKeyPath:@"originX" options:nil];
-        [newDataObject bind:@"originY" toObject:dummy withKeyPath:@"originY" options:nil];
-        [newDataObject bind:@"width" toObject:dummy withKeyPath:@"width" options:nil];
-        [newDataObject bind:@"height" toObject:dummy withKeyPath:@"height" options:nil];
+        [newDataObject bind:@"originX" toObject:myview withKeyPath:@"originX" options:nil];
+        [newDataObject bind:@"originY" toObject:myview withKeyPath:@"originY" options:nil];
+        [newDataObject bind:@"width" toObject:myview withKeyPath:@"width" options:nil];
+        [newDataObject bind:@"height" toObject:myview withKeyPath:@"height" options:nil];
 
-        [newDataObject bind:@"inputs" toObject:dummy withKeyPath:@"inputs" options:nil];
-        [newDataObject bind:@"outputs" toObject:dummy withKeyPath:@"outputs" options:nil];
-        [dummy setValue:newDataObject forKeyPath:@"data"];
+        [newDataObject bind:@"inputs" toObject:myview withKeyPath:@"inputs" options:nil];
+        [newDataObject bind:@"outputs" toObject:myview withKeyPath:@"outputs" options:nil];
+        [myview setValue:newDataObject forKeyPath:@"data"];
 
         if(0){
             var keysArray = [[newDataObject class] keysForNonBoundsProperties];
@@ -313,10 +315,9 @@ function treshold(x, tr)
     for (var i = 0; i < svCount; i++)
     {
         var view = sv[i];
+
         if ([view valueForKey:@"data"] == data)
-        {
             return view;
-        }
     }
 
     return nil;
@@ -327,14 +328,15 @@ function treshold(x, tr)
     return [_selectionIndexesContainer valueForKeyPath:_selectionIndexesKeyPath];
 }
 
-- (CPArray)oldDataObjects { return _oldDataObjects; }
+- (CPArray)oldDataObjects
+{
+    return _oldDataObjects;
+}
 
 - (void)setOldDataObjects:(CPArray)anOldDataObjects
 {
     if (_oldDataObjects != anOldDataObjects)
-    {
         _oldDataObjects = [anOldDataObjects mutableCopy];
-    }
 }
 
 - (CPMutableArray)laces
@@ -603,10 +605,8 @@ function treshold(x, tr)
     }
 
     [self willChangeValueForKey:@"laces"];
-    [[self laces] addObject:conn];
-    [self didChangeValueForKey:@"laces"];
-
     [[startHole mutableSetValueForKey:@"laces"] addObject:endHole];
+    [self didChangeValueForKey:@"laces"];
 }
 
 - (BOOL) acceptsFirstResponder
@@ -745,6 +745,7 @@ function treshold(x, tr)
         [_startHole didChangeValueForKey:@"laces"];
         [_endHole didChangeValueForKey:@"laces"];
         [self didChangeValueForKey:@"laces"];
+        [self setNeedsDisplay:YES];
 
         _startPoint = [_startSubView startHolePoint:_startHole];
         _endPoint = mouseLoc;
