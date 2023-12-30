@@ -7,6 +7,7 @@
 //  todo
 //  - draw title more nicely
 //  - add undo-redo
+//  - try to implement id based identity check
 //
 //  original copyright notice
 //  EFLaceView
@@ -528,7 +529,6 @@ function treshold(x, tr)
 
 - (void)selectView:(EFView)aView state:(BOOL)select
 {
-
     var selection = [[self selectionIndexes] mutableCopy];
     var dataObjectIndex = [[self dataObjects] indexOfObject:[aView valueForKey:@"data"]];
 
@@ -591,12 +591,15 @@ function treshold(x, tr)
     if ([startHole valueForKey:@"data"] == [endHole valueForKey:@"data"] && [startHole valueForKey:@"data"])
         return;
 
-    var conn = @{@"startHole": startHole, @"endHole": endHole};
+    var conn = @{@"startHole":startHole, @"endHole":endHole};
+    var laces = [self laces];
 
+    
     // check if already connected
-    for (var i = 0 ; i < [[self laces] count] ; i++)
+    for (var i = 0 ; i < [laces count] ; i++)
     {
-        if ([conn isEqualToDictionary:[self laces][i]])
+        if ([conn objectForKey:@"startHole"] == [laces[i] objectForKey:@"startHole"] &&
+            [conn objectForKey:@"endHole"] == [laces[i] objectForKey:@"endHole"])
             return;
     }
 

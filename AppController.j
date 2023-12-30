@@ -28,29 +28,133 @@
 }
 @end
 
+@implementation CPColor(BlendAddititon)
+- (CPColor)blendedColorWithFraction:(CGFloat)fraction ofColor:(CPColor)color
+{
+    var red = [_components[0], color._components[0]],
+    green = [_components[1], color._components[1]],
+    blue = [_components[2], color._components[2]],
+    alpha = [_components[3], color._components[3]];
+
+    var blendedRed = red[0] + fraction * (red[1] - red[0]);
+    var blendedGreen = green[0] + fraction * (green[1] - green[0]);
+    var blendedBlue = blue[0] + fraction * (blue[1] - blue[0]);
+    var blendedAlpha = alpha[0] + fraction * (alpha[1] - alpha[0]);
+
+    return [CPColor colorWithCalibratedRed:blendedRed green:blendedGreen blue:blendedBlue alpha:blendedAlpha];
+}
+@end
+
 @implementation AppController : CPObject
 {
     EFLaceView  laceView;
 }
 
-- (void)applicationDidFinishLaunching:(CPNotification)aNotification
++ (CPDictionary)constantTextBlockAtPoint:(CGPoint)aPoint value:(CPString)aValue
 {
-    var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
-    contentView = [theWindow contentView];
+    var mydata = [CPConservativeDictionary new];
+    [mydata setValue:'Constant' forKey:'title'];
+    [mydata setValue:aPoint.x forKey:'originX'];
+    [mydata setValue:aPoint.y forKey:'originY'];
+    [mydata setValue:aValue forKey:'constantValue'];
 
-    [contentView setBackgroundColor:[CPColor colorWithWhite:0.95 alpha:1.0]];
+    var myoutput = [CPConservativeDictionary new];
+    [myoutput setValue:'↣' forKey:'label'];
+    [mydata setValue:@[myoutput] forKey:'outputs'];
 
-    var mybutton=[[CPButton alloc] initWithFrame:CGRectMake(0, 0, 250, 25)];
-    [mybutton setTitle:"Add"]
-    [mybutton setTarget:self];
-    [mybutton setAction:@selector(addBlock:)];
+    return mydata;
+}
 
-    [contentView addSubview:mybutton];
++ (CPDictionary)fetchBlockAtPoint:(CGPoint)aPoint
+{
+    var mydata = [CPConservativeDictionary new];
+    [mydata setValue:'Fetch' forKey:'title'];
+    [mydata setValue:aPoint.x forKey:'originX'];
+    [mydata setValue:aPoint.y forKey:'originY'];
 
+    var myoutput = [CPConservativeDictionary new];
+    [myoutput setValue:'↣' forKey:'label'];
+    [mydata setValue:@[myoutput] forKey:'outputs'];
 
-    laceView = [[EFLaceView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
-    var ac = [CPArrayController new];
+    return mydata;
+}
 
++ (CPDictionary)LLMBlockAtPoint:(CGPoint)aPoint inputNumber:(unsigned)inputNumber
+{
+    var mydata = [CPConservativeDictionary new];
+    [mydata setValue:'LLM' forKey:'title'];
+    [mydata setValue:aPoint.x forKey:'originX'];
+    [mydata setValue:aPoint.y forKey:'originY'];
+
+    var myoutput = [CPConservativeDictionary new];
+    [myoutput setValue:'↣' forKey:'label'];
+    [mydata setValue:@[myoutput] forKey:'outputs'];
+
+    var myinputArray = [];
+    var myinput = [CPConservativeDictionary new];
+    [myinput setValue:'SystemPrompt' forKey:'label'];
+    myinputArray.push(myinput);
+    myinput = [CPConservativeDictionary new];
+    [myinput setValue:'PromptTemplate' forKey:'label'];
+    myinputArray.push(myinput);
+
+    for(var i = 0 ; i < inputNumber ; i++)
+    {
+        myinput = [CPConservativeDictionary new];
+        [myinput setValue:'Input ' + ((i + 1) + '')  forKey:'label'];
+        myinputArray.push(myinput);
+    }
+    [mydata setValue:myinputArray forKey:'inputs'];
+
+    return mydata;
+}
+
++ (CPDictionary)regexBlockAtPoint:(CGPoint)aPoint
+{
+    var mydata = [CPConservativeDictionary new];
+    [mydata setValue:'Regexp' forKey:'title'];
+    [mydata setValue:aPoint.x forKey:'originX'];
+    [mydata setValue:aPoint.y forKey:'originY'];
+
+    var myoutput = [CPConservativeDictionary new];
+    [myoutput setValue:'↣' forKey:'label'];
+    [mydata setValue:@[myoutput] forKey:'outputs'];
+
+    var myinputArray = [];
+    var myinput = [CPConservativeDictionary new];
+    [myinput setValue:'Input' forKey:'label'];
+    myinputArray.push(myinput);
+    myinput = [CPConservativeDictionary new];
+    [myinput setValue:'Regex' forKey:'label'];
+    myinputArray.push(myinput);
+
+    [mydata setValue:myinputArray forKey:'inputs'];
+
+    return mydata;
+}
+
++ (void)connectBlock:(id)mydata toOtherBlock:(id)mydata2 usingOutletNamed:(CPString)name
+{
+    var startHoles = [mydata valueForKey:'outputs'];
+    var endHoles = [mydata2 valueForKey:'inputs'];
+    var myinput;
+
+    for (var i = 0; i < [endHoles count] ; i++)
+    {
+        if ([endHoles[i] valueForKey:"label"] == name)
+        {
+            myinput = endHoles[i];
+            break;
+        }
+    }
+
+    [startHoles[0] setValue:[myinput] forKey:"laces"]
+    [myinput setValue:mydata2 forKey:"data"]
+    [startHoles[0] setValue:mydata forKey:"data"]
+}
+
+- (void)_createSimpleSetupIntoAC:(id)ac
+{
     //
     // block 1
     //
@@ -84,10 +188,60 @@
     // make a connection programmatically
     if (1){
         var startHoles = [mydata valueForKey:'outputs'];
-        [startHoles[0] setValue:[mydata2 valueForKey:'inputs'] forKey:"laces"]
-        [myinput setValue:mydata2 forKey:"data"]
-        [myoutput setValue:mydata forKey:"data"]
+        var endHoles = [mydata2 valueForKey:'inputs'];
+        [startHoles[0] setValue:endHoles forKey:"laces"]
+        [endHoles[0] setValue:mydata2 forKey:"data"]
+        [startHoles[0] setValue:mydata forKey:"data"]
     }
+}
+- (void)_createComplexSetupIntoAC:(id)ac
+{
+    var block0 = [AppController fetchBlockAtPoint:CGPointMake(30,10)];
+    [ac insertObject:block0 atArrangedObjectIndex:0];
+
+    var block1 = [AppController constantTextBlockAtPoint:CGPointMake(10,70) value:"You are a helpful assistant"];
+    [ac insertObject:block1 atArrangedObjectIndex:0];
+    var block2 = [AppController constantTextBlockAtPoint:CGPointMake(10,120) value:"You are a helpful assistant"];
+    [ac insertObject:block2 atArrangedObjectIndex:0];
+    var block3 = [AppController constantTextBlockAtPoint:CGPointMake(10,170) value:"You are a helpful assistant"];
+    [ac insertObject:block3 atArrangedObjectIndex:0];
+    var block4 = [AppController LLMBlockAtPoint:CGPointMake(100,10) inputNumber:1]
+    [ac insertObject:block4 atArrangedObjectIndex:0];
+    [AppController connectBlock:block0 toOtherBlock:block4 usingOutletNamed:"Input 1"]
+
+    var block5 = [AppController LLMBlockAtPoint:CGPointMake(250,10) inputNumber:1]
+    [block5 setValue:'2000' forKey:'id']
+    [ac insertObject:block5 atArrangedObjectIndex:0];
+
+    var block6 = [AppController constantTextBlockAtPoint:CGPointMake(400,3) value:"You are a helpful assistant"]
+    [ac insertObject:block6 atArrangedObjectIndex:0];
+
+    var block7 = [AppController regexBlockAtPoint:CGPointMake(400,50)]
+    [ac insertObject:block7 atArrangedObjectIndex:0];
+
+}
+
+- (void)applicationDidFinishLaunching:(CPNotification)aNotification
+{
+    var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
+    contentView = [theWindow contentView];
+
+    [contentView setBackgroundColor:[CPColor colorWithWhite:0.95 alpha:1.0]];
+
+    var mybutton=[[CPButton alloc] initWithFrame:CGRectMake(0, 0, 250, 25)];
+    [mybutton setTitle:"Add"]
+    [mybutton setTarget:self];
+    [mybutton setAction:@selector(addBlock:)];
+    [contentView addSubview:mybutton];
+
+
+    laceView = [[EFLaceView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+    var ac = [CPArrayController new];
+
+    if (0)
+        [self _createSimpleSetupIntoAC:ac];
+    else
+        [self _createComplexSetupIntoAC:ac];
 
     [laceView bind:"selectionIndexes" toObject:ac withKeyPath:"selectionIndexes" options:nil]
     [laceView bind:"dataObjects" toObject:ac withKeyPath:"arrangedObjects" options:nil]
