@@ -129,19 +129,12 @@
     [column bind:CPValueBinding toObject:ac
           withKeyPath:@"arrangedObjects.originX" options:nil];
 
-    column = [[CPTableColumn alloc] initWithIdentifier:@"inputs"];
+    column = [[CPTableColumn alloc] initWithIdentifier:@"y"];
     [column setEditable:YES];
-    [[column headerView] setStringValue:@"In"];
+    [[column headerView] setStringValue:@"Y"];
     [tableView addTableColumn:column];
     [column bind:CPValueBinding toObject:ac
-     withKeyPath:@"arrangedObjects.inputs" options:nil];
-
-    column = [[CPTableColumn alloc] initWithIdentifier:@"outputs"];
-    [column setEditable:YES];
-    [[column headerView] setStringValue:@"Out"];
-    [tableView addTableColumn:column];
-    [column bind:CPValueBinding toObject:ac
-     withKeyPath:@"arrangedObjects.outputs" options:nil];
+     withKeyPath:@"arrangedObjects.originY" options:nil];
 
     var scrollView2 = [[CPScrollView alloc] initWithFrame:CGRectMake(600, 70, 520, 510)];
     [scrollView2 setDocumentView:tableView];
