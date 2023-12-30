@@ -28,23 +28,6 @@
 }
 @end
 
-@implementation CPColor(BlendAddititon)
-- (CPColor)blendedColorWithFraction:(CGFloat)fraction ofColor:(CPColor)color
-{
-    var red = [_components[0], color._components[0]],
-        green = [_components[1], color._components[1]],
-        blue = [_components[2], color._components[2]],
-        alpha = [_components[3], color._components[3]];
-
-    var blendedRed = red[0] + fraction * (red[1] - red[0]);
-    var blendedGreen = green[0] + fraction * (green[1] - green[0]);
-    var blendedBlue = blue[0] + fraction * (blue[1] - blue[0]);
-    var blendedAlpha = alpha[0] + fraction * (alpha[1] - alpha[0]);
-
-    return [CPColor colorWithCalibratedRed:blendedRed green:blendedGreen blue:blendedBlue alpha:blendedAlpha];
-}
-@end
-
 @implementation AppController : CPObject
 {
     EFLaceView  laceView;
