@@ -5,6 +5,9 @@
 //  EFLaceView.m
 //  all changes copyright by daniel boehringer
 //  todo
+//  - delegation
+//  - tooltipps for holes (ask delegate, label by default)
+//  - delete
 //  - draw title more nicely
 //  - add undo-redo
 //  - try to implement id based identity check
@@ -42,10 +45,11 @@
 // fixme: need to implement delegate methods
 /*
 @interface CPObject (EFLaceViewDelegateMethod)
-- (BOOL)EFLaceView:(EFLaceView)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
-- (BOOL)EFLaceView:(EFLaceView)aView shouldSelectLace:(CPDictionary)aLace;
-- (BOOL)EFLaceView:(EFLaceView)aView shouldConnectHole:(id)startHole toHole:(id)endHole;
-- (BOOL)EFLaceView:(EFLaceView)aView shouldDrawView:(EFView)aView;
+- (BOOL)laceView:(EFLaceView)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
+- (BOOL)laceView:(EFLaceView)aView shouldSelectLace:(CPDictionary)aLace;
+- (BOOL)laceView:(EFLaceView)aView shouldConnectHole:(id)startHole toHole:(id)endHole;
+- (BOOL)laceView:(EFLaceView)aView didConnectHole:(id)startHole toHole:(id)endHole;
+- (BOOL)laceView:(EFLaceView)aView didUnconnectHole:(id)startHole toHole:(id)endHole;
 @end
 */
 

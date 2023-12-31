@@ -14,6 +14,11 @@
 @import "EFView.j"
 
 @implementation CPConservativeDictionary:CPDictionary
++ (CPArray)keysForNonBoundsProperties
+{
+    return [];
+}
+
 - (void)setValue:(id)aVal forKey:(CPString)aKey
 {
     if ([self objectForKey:aKey] != aVal)
@@ -210,7 +215,7 @@
     [AppController connectBlock:block0 toOtherBlock:block4 usingOutletNamed:"Input 1"]
 
     var block5 = [AppController LLMBlockAtPoint:CGPointMake(250,10) inputNumber:1]
-    [block5 setValue:'2000' forKey:'id']
+    [block5 setValue:'2000' forKey:'id']; // blocks must be unique
     [ac insertObject:block5 atArrangedObjectIndex:0];
 
     var block6 = [AppController constantTextBlockAtPoint:CGPointMake(400,3) value:"You are a helpful assistant"]
@@ -224,19 +229,25 @@
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
     var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
-    contentView = [theWindow contentView];
+    laceView = [[EFLaceView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+    var ac = [CPArrayController new];
 
+    contentView = [theWindow contentView];
     [contentView setBackgroundColor:[CPColor colorWithWhite:0.95 alpha:1.0]];
 
-    var mybutton=[[CPButton alloc] initWithFrame:CGRectMake(0, 0, 250, 25)];
+    var mybutton = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, 90, 25)];
     [mybutton setTitle:"Add"]
     [mybutton setTarget:self];
     [mybutton setAction:@selector(addBlock:)];
     [contentView addSubview:mybutton];
 
+     mybutton=[[CPButton alloc] initWithFrame:CGRectMake(100, 0, 90, 25)];
+    [mybutton setTitle:"Delete"]
+    [mybutton setTarget:laceView];
+    [mybutton setAction:@selector(delete:)];
+    [contentView addSubview:mybutton];
 
-    laceView = [[EFLaceView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
-    var ac = [CPArrayController new];
+
 
     if (0)
         [self _createSimpleSetupIntoAC:ac];
