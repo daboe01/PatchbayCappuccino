@@ -61,6 +61,8 @@ var _inoutputObservationContext = 1094;
 
 @end
 
+@class CPTrackingArea;
+
 @implementation EFView : CPView
 {
     CPString                _title;
@@ -71,7 +73,7 @@ var _inoutputObservationContext = 1094;
     CPMutableDictionary     _stringAttributes;
     id                      _data @accessors(property=data);
     CGPoint                 _lastMouseLoc;
-    id                      _representedObject;
+    CPTrackingArea          _trackingArea;
 }
 
 - (id)init
@@ -104,6 +106,12 @@ var _inoutputObservationContext = 1094;
         // need to update view when labels or positions are changed in inputs or ouputs
         [self addObserver:self forKeyPath:@"inputs" options:(CPKeyValueObservingOptionNew|CPKeyValueObservingOptionOld) context:_inoutputObservationContext];
         [self addObserver:self forKeyPath:@"outputs" options:(CPKeyValueObservingOptionNew|CPKeyValueObservingOptionOld) context:_inoutputObservationContext];
+
+        _trackingArea = [[CPTrackingArea alloc] initWithRect:CGRectMakeZero()
+                                                    options:CPTrackingMouseMoved | CPTrackingActiveInKeyWindow | CPTrackingInVisibleRect
+                                                      owner:self
+                                                   userInfo:nil];
+        [self addTrackingArea:_trackingArea];
     }
     
     return self;
@@ -111,6 +119,8 @@ var _inoutputObservationContext = 1094;
 
 - (void)removeFromSuperview
 {
+    [self removeTrackingArea:_trackingArea];
+
     for (var i = 0;  i < [_inputs count]; i++)
     {
         var anObject = _inputs[i];
@@ -487,6 +497,8 @@ var _inoutputObservationContext = 1094;
         [self didChangeValueForKey:@"width"];
         [self didChangeValueForKey:@"drawingBounds"];
     }
+
+
 }
 
 - (BOOL)acceptsFirstResponder
@@ -537,6 +549,20 @@ var _inoutputObservationContext = 1094;
             [sView setNeedsDisplay:YES];
             break;
     }
+}
+
+- (void)mouseMoved:(CPEvent)theEvent
+{
+    var aPoint = [[self superview] convertPoint:[theEvent locationInWindow] fromView:nil];
+    var startHole = [self startHole:aPoint];
+    var endHole = [self endHole:aPoint]
+
+    if (!startHole && !endHole)
+        return;
+
+    if ([self superview]._delegate && [[self superview]._delegate respondsToSelector:@selector(laceView:showTooltipForHole:)])
+        [[self superview]._delegate laceView:[self superview] showTooltipForHole:startHole || endHole];
+
 }
 
 - (void)mouseDown:(CPEvent)theEvent

@@ -1,7 +1,7 @@
 /*
  * AppController.j
  *
- *  Test application for EFLaceView
+ *  Test / Demo application for EFLaceView
  *  Copyright (C) 2023 Daniel Boehringer
  *
  * todo
@@ -236,7 +236,7 @@
 }
 - (void)laceView:(EFLaceView)aView showTooltipForHole:(id)aHole
 {
-
+    document.title = [aHole valueForKey:"label"]
 }
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification

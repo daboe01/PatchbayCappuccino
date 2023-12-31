@@ -5,10 +5,8 @@
 //  EFLaceView.m
 //  all changes copyright by daniel boehringer
 //  todo
-//  - delegation
-//  - tooltipps for holes (ask delegate, label by default)
 //  - draw title more nicely
-//  - add undo-redo
+//  - add undo-redo using [_window undoManager] prepareWithInvocationTarget
 //
 //  original copyright notice
 //  EFLaceView
@@ -73,7 +71,6 @@
     EFView           _endSubView;
 
     id               _delegate;
-
 }
 
 var _propertyObservationContext = 1091;
