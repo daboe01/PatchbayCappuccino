@@ -226,10 +226,24 @@
 
 }
 
+- (void)laceView:(EFLaceView)aView didConnectHole:(id)startHole toHole:(id)endHole
+{
+    alert("didConnectHole");
+}
+- (void)laceView:(EFLaceView)aView didUnconnectHole:(id)startHole fromHole:(id)endHole
+{
+    alert("didUnConnectHole");
+}
+- (void)laceView:(EFLaceView)aView showTooltipForHole:(id)aHole
+{
+
+}
+
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
     var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
     laceView = [[EFLaceView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+    [laceView setDelegate:self];
     var ac = [CPArrayController new];
 
     contentView = [theWindow contentView];

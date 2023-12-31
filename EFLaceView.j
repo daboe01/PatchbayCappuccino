@@ -9,7 +9,6 @@
 //  - tooltipps for holes (ask delegate, label by default)
 //  - draw title more nicely
 //  - add undo-redo
-//  - try to implement id based identity check
 //
 //  original copyright notice
 //  EFLaceView
@@ -44,11 +43,9 @@
 // fixme: need to implement delegate methods
 /*
 @interface CPObject (EFLaceViewDelegateMethod)
-- (BOOL)laceView:(EFLaceView)aView shouldSelectView:(EFView)aView state:(BOOL)aBool;
-- (BOOL)laceView:(EFLaceView)aView shouldSelectLace:(CPDictionary)aLace;
-- (BOOL)laceView:(EFLaceView)aView shouldConnectHole:(id)startHole toHole:(id)endHole;
-- (BOOL)laceView:(EFLaceView)aView didConnectHole:(id)startHole toHole:(id)endHole;
-- (BOOL)laceView:(EFLaceView)aView didUnconnectHole:(id)startHole toHole:(id)endHole;
+- (void)laceView:(EFLaceView)aView didConnectHole:(id)startHole toHole:(id)endHole;
+- (void)laceView:(EFLaceView)aView didUnconnectHole:(id)startHole fromHole:(id)endHole;
+- (void)laceView:(EFLaceView)aView showTooltipForHole:(id)aHole;
 @end
 */
 
@@ -615,6 +612,10 @@ function treshold(x, tr)
 
     [self willChangeValueForKey:@"laces"];
     [[startHole mutableSetValueForKey:@"laces"] addObject:endHole];
+
+    if (_delegate && [_delegate respondsToSelector:@selector(laceView:didConnectHole:toHole:)])
+        [_delegate laceView:self didConnectHole:startHole toHole:endHole];
+
     [self didChangeValueForKey:@"laces"];
 }
 
@@ -751,6 +752,9 @@ function treshold(x, tr)
 
         [[_startHole mutableSetValueForKey:@"laces"] removeObject:_endHole];
         [[_endHole mutableSetValueForKey:@"laces"] removeObject:_startHole];
+
+        if (_delegate && [_delegate respondsToSelector:@selector(laceView:didUnconnectHole:fromHole:)])
+            [_delegate laceView:self didUnconnectHole:_startHole fromHole:_endHole];
 
         [_startHole didChangeValueForKey:@"laces"];
         [_endHole didChangeValueForKey:@"laces"];
