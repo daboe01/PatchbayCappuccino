@@ -7,7 +7,6 @@
 //  todo
 //  - delegation
 //  - tooltipps for holes (ask delegate, label by default)
-//  - delete
 //  - draw title more nicely
 //  - add undo-redo
 //  - try to implement id based identity check
@@ -482,6 +481,13 @@ function treshold(x, tr)
                         var endData = [endHole valueForKey:@"data"];
 
                         var endView = [self viewForData:endData];
+
+                        if (!endView)
+                        {
+                            [endHole removeObjectForKey:@"data"]
+                            continue;
+                        }
+
                         var endPoint = [endView endHolePoint:endHole];
 
                         if ([startView isSelected] || [endView isSelected])
@@ -622,6 +628,7 @@ function treshold(x, tr)
     if ([_dataObjectsContainer respondsToSelector:@selector(remove:)])
     {
         [_dataObjectsContainer performSelector:@selector(remove:) withObject:self];
+        [self deselectViews];
         [self setNeedsDisplay:YES];
     }
 }
